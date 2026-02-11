@@ -3,9 +3,9 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/docs"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/http/api"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-user-mservice/common/middleware"
+	_ "github.com/sw5005-sus/ceramicraft-comment-mservice/server/docs"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/http/api"
+	"github.com/sw5005-sus/ceramicraft-user-mservice/common/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	gs "github.com/swaggo/gin-swagger"
 )

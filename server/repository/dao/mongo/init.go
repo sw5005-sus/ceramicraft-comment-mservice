@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/config"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/config"
 )
 
 var (

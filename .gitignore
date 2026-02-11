@@ -36,3 +36,4 @@ server/logs/
 .vscode/
 .tool-versions
 
+.DS_Store

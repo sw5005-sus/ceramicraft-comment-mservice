@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	model "github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/model"
+	model "github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/model"
 	gomock "github.com/golang/mock/gomock"
 )
 

@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/log"
-	myMongo "github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/dao/mongo"
-	myRedis "github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/dao/redis"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/model"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/log"
+	myMongo "github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao/mongo"
+	myRedis "github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao/redis"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/model"
 	"github.com/redis/go-redis/v9"
 
 	"go.mongodb.org/mongo-driver/bson"

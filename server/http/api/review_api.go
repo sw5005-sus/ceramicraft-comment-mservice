@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/http/data"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/service"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/types"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/http/data"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/service"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/types"
 	"github.com/gin-gonic/gin"
 )
 
