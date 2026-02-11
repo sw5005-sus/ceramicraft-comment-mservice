@@ -54,7 +54,7 @@ The recommended way to run the entire system (services + infrastructure) is usin
 
 1.  **Clone the repository:**
     ```bash
-    git clone git@github.com:NUS-ISS-Agile-Team/ceramicraft-deploy.git
+    git clone git@github.com:sw5005-sus/ceramicraft-deploy.git
     cd ceramicraft-deploy
     ```
 

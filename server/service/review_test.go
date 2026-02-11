@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/log"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/dao/mocks"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/model"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/types"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/log"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao/mocks"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/model"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/types"
 )
 
 func init() {

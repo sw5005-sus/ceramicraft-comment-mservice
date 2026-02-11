@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/log"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/dao"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/model"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/types"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/log"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/model"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/types"
 )
 
 type ReviewService interface {

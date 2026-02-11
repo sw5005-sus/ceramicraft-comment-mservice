@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/dao/mongo"
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/server/repository/dao/redis"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao/mongo"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao/redis"
 )
 
 func Init() {

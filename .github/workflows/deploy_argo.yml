@@ -37,7 +37,7 @@ jobs:
       - name: Checkout argocd deploy repo
         uses: actions/checkout@v4
         with:
-          repository: NUS-ISS-Agile-Team/ceramicraft-argocd-deploy
+          repository: sw5005-sus/ceramicraft-argocd-deploy
           token: ${{ secrets.PAT_TOKEN }}
           ref: main
           path: argocd-deploy

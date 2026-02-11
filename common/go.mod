@@ -1,6 +1,6 @@
-module github.com/NUS-ISS-Agile-Team/ceramicraft-comment-mservice/common
+module github.com/sw5005-sus/ceramicraft-comment-mservice/common
 
-go 1.24.9
+go 1.25.7
 
 require (
 	google.golang.org/grpc v1.76.0
