@@ -9,7 +9,7 @@ require (
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
 	github.com/sw5005-sus/ceramicraft-comment-mservice/common v0.0.1
-	github.com/sw5005-sus/ceramicraft-user-mservice/common v0.0.4
+	github.com/sw5005-sus/ceramicraft-user-mservice/common v0.0.11
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1
 	github.com/swaggo/swag v1.16.6
