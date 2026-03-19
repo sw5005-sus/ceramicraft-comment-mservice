@@ -290,7 +290,7 @@ paths:
       summary: Get reviews by user
       tags:
       - Review
-  /comment-ms/v1/merchant/review/{review_id}:
+  /comment-ms/v1/merchant/reviews/{review_id}:
     delete:
       consumes:
       - application/json
@@ -334,7 +334,6 @@ paths:
       summary: Delete a review
       tags:
       - Review
-  /comment-ms/v1/merchant/reviews/{review_id}:
     patch:
       consumes:
       - application/json
@@ -379,7 +378,7 @@ paths:
       summary: Pin a review
       tags:
       - Review
-  /comment-ms/v1/merchant/reviews/{review_id}/reply:
+  /comment-ms/v1/merchant/reviews/{review_id}/replies:
     post:
       consumes:
       - application/json

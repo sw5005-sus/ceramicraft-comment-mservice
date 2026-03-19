@@ -33,10 +33,10 @@ func NewRouter() *gin.Engine {
 	merchantGroup := basicGroup.Group("/merchant")
 	{
 		merchantGroup.Use(middleware.AuthMiddleware())
-		merchantGroup.PATCH("/reviews/:review_id", api.PinReview)
-		merchantGroup.DELETE("/review/:review_id", api.DeleteReview)
+		merchantGroup.PATCH("/reviews/:review_id", middleware.RequireRoles("merchant_admin"), api.PinReview)
+		merchantGroup.DELETE("/reviews/:review_id", middleware.RequireRoles("merchant_admin"), api.DeleteReview)
 		merchantGroup.POST("/reviews/list", api.ListReviewsByFilter)
-		merchantGroup.POST("/reviews/:review_id/replies", api.ReplyReview)
+		merchantGroup.POST("/reviews/:review_id/replies", middleware.RequireRoles("merchant_admin"), api.ReplyReview)
 	}
 
 	customerGroup := basicGroup.Group("/customer")

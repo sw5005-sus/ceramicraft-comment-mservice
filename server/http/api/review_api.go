@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/http/data"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/service"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/types"
-	"github.com/gin-gonic/gin"
 )
 
 // CreateReview Create.
@@ -197,7 +197,7 @@ func PinReview(c *gin.Context) {
 // @Success 200 {object} data.BaseResponse{data=string}
 // @Failure 400 {object} data.BaseResponse{data=string}
 // @Failure 500 {object} data.BaseResponse{data=string}
-// @Router /comment-ms/v1/merchant/review/{review_id} [delete]
+// @Router /comment-ms/v1/merchant/reviews/{review_id} [delete]
 func DeleteReview(c *gin.Context) {
 	reviewID := c.Param("review_id")
 	if reviewID == "" {
@@ -223,7 +223,7 @@ func DeleteReview(c *gin.Context) {
 // @Success 200	{object} data.BaseResponse{data=types.CreateReviewRequest}
 // @Failure 400 {object} data.BaseResponse{data=string}
 // @Failure 500 {object} data.BaseResponse{data=string}
-// @Router /comment-ms/v1/merchant/reviews/{review_id}/reply [post]
+// @Router /comment-ms/v1/merchant/reviews/{review_id}/replies [post]
 func ReplyReview(c *gin.Context) {
 	parentID := c.Param("review_id")
 	if parentID == "" {
