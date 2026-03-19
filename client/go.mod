@@ -1,6 +1,6 @@
 module github.com/sw5005-sus/ceramicraft-comment-mservice/client
 
-go 1.25.7
+go 1.25.8
 
 require (
 	github.com/sw5005-sus/ceramicraft-comment-mservice/common v0.0.1
