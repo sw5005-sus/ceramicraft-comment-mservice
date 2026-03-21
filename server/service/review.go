@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/log"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/model"
@@ -188,9 +189,13 @@ func (r *ReviewServiceImpl) GetListByQuery(ctx context.Context, req types.ListRe
 	return list, nil
 }
 
+var (
+	ugcSanitizerPolicy = bluemonday.UGCPolicy()
+)
+
 func (r *ReviewServiceImpl) CreateReview(ctx context.Context, req types.CreateReviewRequest, userID int) (err error) {
-	return r.reviewDao.Save(ctx, &model.Comment{
-		Content:     req.Content,
+	comment := &model.Comment{
+		Content:     ugcSanitizerPolicy.Sanitize(req.Content),
 		UserID:      userID,
 		ProductID:   req.ProductID,
 		ParentID:    req.ParentID,
@@ -198,7 +203,12 @@ func (r *ReviewServiceImpl) CreateReview(ctx context.Context, req types.CreateRe
 		IsAnonymous: req.IsAnonymous,
 		Stars:       req.Stars,
 		PicInfo:     req.PicInfo,
-	})
+	}
+	if comment.Content == "" && len(comment.PicInfo) == 0 {
+		log.Logger.Warnf("CreateReview: empty content and pic_info, skip")
+		return nil
+	}
+	return r.reviewDao.Save(ctx, comment)
 }
 
 func (r *ReviewServiceImpl) Like(ctx context.Context, req types.LikeRequest, userID int) (err error) {

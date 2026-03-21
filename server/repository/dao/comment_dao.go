@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/log"
 	myMongo "github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao/mongo"
 	myRedis "github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/dao/redis"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/repository/model"
-	"github.com/redis/go-redis/v9"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

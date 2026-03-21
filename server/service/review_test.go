@@ -58,6 +58,28 @@ func TestCreateReview_Success(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestCreateReview_Fail(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	req := types.CreateReviewRequest{
+		ProductID:   42,
+		Content:     "<script>alert('XSS_TEST_CERAMICRAFT')</script>",
+		ParentID:    "0",
+		Stars:       5,
+		PicInfo:     []string{},
+		IsAnonymous: false,
+	}
+	userID := 123
+	mockDao.EXPECT().Save(gomock.Any(), gomock.AssignableToTypeOf(&model.Comment{})).Times(0)
+	err := svc.CreateReview(context.Background(), req, userID)
+	assert.NoError(t, err)
+}
+
 func TestLike_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
