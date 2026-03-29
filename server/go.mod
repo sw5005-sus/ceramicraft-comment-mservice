@@ -9,7 +9,7 @@ require (
 	github.com/redis/go-redis/v9 v9.14.0
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	github.com/sw5005-sus/ceramicraft-audit-client v0.0.1
+	github.com/sw5005-sus/ceramicraft-audit-client v0.0.2
 	github.com/sw5005-sus/ceramicraft-comment-mservice/common v0.0.1
 	github.com/sw5005-sus/ceramicraft-user-mservice/common v0.0.14
 	github.com/swaggo/files v1.0.1

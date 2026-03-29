@@ -152,8 +152,8 @@ github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
-github.com/sw5005-sus/ceramicraft-audit-client v0.0.1 h1:1PWb1EI0jWohY3OOB+DAdMxt0obiiJhHl+F++YoCGyg=
-github.com/sw5005-sus/ceramicraft-audit-client v0.0.1/go.mod h1:wlBaqsukUK09HO0r6R/aZbMpMLRpRxHkQMRDvZcsXJU=
+github.com/sw5005-sus/ceramicraft-audit-client v0.0.2 h1:oyTq9fXPnqSFec1Sxuw3bJ8lR65GkgnXiYoBTDYjwk8=
+github.com/sw5005-sus/ceramicraft-audit-client v0.0.2/go.mod h1:wlBaqsukUK09HO0r6R/aZbMpMLRpRxHkQMRDvZcsXJU=
 github.com/sw5005-sus/ceramicraft-comment-mservice/common v0.0.1 h1:BzCSZLnP21PWmokU2Rx2lkqY+M8edKZMy9RFm5UTsm0=
 github.com/sw5005-sus/ceramicraft-comment-mservice/common v0.0.1/go.mod h1:NeABJwYjr254wuLUNbst7s/YqvqIzkDq8wr9O1JLP9Q=
 github.com/sw5005-sus/ceramicraft-user-mservice/common v0.0.14 h1:ALUnCeVFyLFpPu+rRkCJMTf45aGXF7Vn278kQBtKG3g=
