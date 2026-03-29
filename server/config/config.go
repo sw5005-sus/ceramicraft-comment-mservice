@@ -9,12 +9,13 @@ import (
 var Config = &Conf{}
 
 type Conf struct {
-	GrpcConfig  *GrpcConfig    `mapstructure:"grpc"`
-	LogConfig   *LogConfig     `mapstructure:"log"`
-	HttpConfig  *HttpConfig    `mapstructure:"http"`
-	MySQLConfig *MySQL         `mapstructure:"mysql"`
-	MongoConfig *MongoDBConfig `mapstructure:"mongo"`
-	RedisConfig *RedisConfig   `mapstructure:"redis"`
+	GrpcConfig      *GrpcConfig    `mapstructure:"grpc"`
+	LogConfig       *LogConfig     `mapstructure:"log"`
+	HttpConfig      *HttpConfig    `mapstructure:"http"`
+	MySQLConfig     *MySQL         `mapstructure:"mysql"`
+	MongoConfig     *MongoDBConfig `mapstructure:"mongo"`
+	RedisConfig     *RedisConfig   `mapstructure:"redis"`
+	AuditGrpcConfig *GrpcConfig    `mapstructure:"audit_grpc"`
 }
 
 type RedisConfig struct {

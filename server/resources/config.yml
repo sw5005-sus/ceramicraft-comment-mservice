@@ -26,3 +26,7 @@ mongo:
 redis:
   host: "redis-container"
   port: 6379
+
+audit_grpc:
+  host: "localhost"
+  port: 50051

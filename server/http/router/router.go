@@ -3,6 +3,8 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
+	auditclient "github.com/sw5005-sus/ceramicraft-audit-client"
+	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/config"
 	_ "github.com/sw5005-sus/ceramicraft-comment-mservice/server/docs"
 	"github.com/sw5005-sus/ceramicraft-comment-mservice/server/http/api"
 	"github.com/sw5005-sus/ceramicraft-user-mservice/common/middleware"
@@ -16,7 +18,10 @@ const (
 
 func NewRouter() *gin.Engine {
 	r := gin.Default()
-
+	audit_middleware := auditclient.AuditMiddleware(
+		"comment-ms",
+		config.Config.AuditGrpcConfig.Host,
+		config.Config.AuditGrpcConfig.Port)
 	basicGroup := r.Group(serviceURIPrefix)
 	{
 		basicGroup.GET("/swagger/*any", gs.WrapHandler(
@@ -33,10 +38,10 @@ func NewRouter() *gin.Engine {
 	merchantGroup := basicGroup.Group("/merchant")
 	{
 		merchantGroup.Use(middleware.AuthMiddleware())
-		merchantGroup.PATCH("/reviews/:review_id", middleware.RequireRoles("merchant_admin"), api.PinReview)
-		merchantGroup.DELETE("/reviews/:review_id", middleware.RequireRoles("merchant_admin"), api.DeleteReview)
+		merchantGroup.PATCH("/reviews/:review_id", middleware.RequireRoles("merchant_admin"), audit_middleware, api.PinReview)
+		merchantGroup.DELETE("/reviews/:review_id", middleware.RequireRoles("merchant_admin"), audit_middleware, api.DeleteReview)
 		merchantGroup.POST("/reviews/list", api.ListReviewsByFilter)
-		merchantGroup.POST("/reviews/:review_id/replies", middleware.RequireRoles("merchant_admin"), api.ReplyReview)
+		merchantGroup.POST("/reviews/:review_id/replies", middleware.RequireRoles("merchant_admin"), audit_middleware, api.ReplyReview)
 	}
 
 	customerGroup := basicGroup.Group("/customer")
