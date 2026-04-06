@@ -33,6 +33,8 @@ func NewRouter() *gin.Engine {
 				"message": "pong",
 			})
 		})
+		// Internal API for agent service - no auth required
+		basicGroup.POST("/merchant/reviews/status", audit_middleware, api.UpdateReviewStatus)
 	}
 
 	merchantGroup := basicGroup.Group("/merchant")

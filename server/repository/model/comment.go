@@ -15,4 +15,8 @@ type Comment struct {
 	IsPinned    bool      `bson:"is_pinned" json:"is_pinned"`
 	PicInfo     []string  `bson:"pic_info" json:"pic_info"`
 	CreatedAt   time.Time `bson:"created_at" json:"created_at"`
+	Status      string    `bson:"status" json:"status"`
+	IsMismatch  bool      `bson:"is_mismatch" json:"is_mismatch"`
+	IsHarmful   bool      `bson:"is_harmful" json:"is_harmful"`
+	AutoFlag    string    `bson:"auto_flag" json:"auto_flag"`
 }

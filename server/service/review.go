@@ -21,6 +21,7 @@ type ReviewService interface {
 	PinReview(ctx context.Context, reviewID string) (err error)
 	DeleteReview(ctx context.Context, reviewID string) (err error)
 	GetListByQuery(ctx context.Context, req types.ListReviewRequest, userID int) (resp []types.ReviewInfo, err error)
+	UpdateReview(ctx context.Context, req types.UpdateReviewStatusRequest) (err error)
 }
 
 const (
@@ -194,6 +195,12 @@ var (
 )
 
 func (r *ReviewServiceImpl) CreateReview(ctx context.Context, req types.CreateReviewRequest, userID int) (err error) {
+	// Merchant replies are auto-approved; customer reviews are pending
+	status := "pending"
+	if req.ParentID != "" {
+		status = "approved"
+	}
+	
 	comment := &model.Comment{
 		Content:     ugcSanitizerPolicy.Sanitize(req.Content),
 		UserID:      userID,
@@ -203,6 +210,10 @@ func (r *ReviewServiceImpl) CreateReview(ctx context.Context, req types.CreateRe
 		IsAnonymous: req.IsAnonymous,
 		Stars:       req.Stars,
 		PicInfo:     req.PicInfo,
+		Status:      status,
+		IsMismatch:  false,
+		IsHarmful:   false,
+		AutoFlag:    "",
 	}
 	if comment.Content == "" && len(comment.PicInfo) == 0 {
 		log.Logger.Warnf("CreateReview: empty content and pic_info, skip")
@@ -287,4 +298,39 @@ func (r *ReviewServiceImpl) DeleteReview(ctx context.Context, reviewID string) (
 	}
 
 	return nil
+}
+
+func (r *ReviewServiceImpl) UpdateReview(ctx context.Context, req types.UpdateReviewStatusRequest) (err error) {
+	if req.ReviewID == "" {
+		return fmt.Errorf("empty review_id")
+	}
+	
+	validStatuses := map[string]bool{
+		"pending":    true,
+		"processing": true,
+		"approved":   true,
+		"hidden":     true,
+		"rejected":   true,
+	}
+	
+	if !validStatuses[req.Status] {
+		return fmt.Errorf("invalid status: %s", req.Status)
+	}
+	
+	// Build update map with mandatory and optional fields
+	updates := map[string]interface{}{
+		"status": req.Status,
+	}
+	
+	if req.IsMismatch != nil {
+		updates["is_mismatch"] = *req.IsMismatch
+	}
+	if req.IsHarmful != nil {
+		updates["is_harmful"] = *req.IsHarmful
+	}
+	if req.AutoFlag != nil {
+		updates["auto_flag"] = *req.AutoFlag
+	}
+	
+	return r.reviewDao.UpdateReviewByID(ctx, req.ReviewID, updates)
 }

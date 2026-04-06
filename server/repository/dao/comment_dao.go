@@ -33,6 +33,7 @@ type CommentDao interface {
 	HDel(ctx context.Context, key string, member string) (err error)
 	HSet(ctx context.Context, key string, member string, value string) (err error)
 	UpdateIsPinnedByID(ctx context.Context, id string, isPinned bool) error
+	UpdateReviewByID(ctx context.Context, id string, updates map[string]interface{}) error
 }
 
 var (
@@ -139,7 +140,7 @@ func (c *CommentDaoImpl) GetListByUserID(ctx context.Context, userID int) (list 
 		log.Logger.Errorf("mongo collection is nil")
 		return nil, nil
 	}
-	cursor, err := c.collection.Find(ctx, bson.M{"user_id": userID})
+	cursor, err := c.collection.Find(ctx, bson.M{"user_id": userID, "status": "approved"})
 	if err != nil {
 		log.Logger.Errorf("Find by user_id failed\tuser_id=%d\terr=%v", userID, err)
 		return nil, err
@@ -171,7 +172,7 @@ func (c *CommentDaoImpl) GetListByProductID(ctx context.Context, productId int) 
 		log.Logger.Errorf("mongo collection is nil")
 		return nil, nil
 	}
-	cursor, err := c.collection.Find(ctx, bson.M{"product_id": productId})
+	cursor, err := c.collection.Find(ctx, bson.M{"product_id": productId, "status": "approved"})
 	if err != nil {
 		log.Logger.Errorf("Find by product_id failed\tproduct_id=%d\terr=%v", productId, err)
 		return nil, err
@@ -212,6 +213,7 @@ func (c *CommentDaoImpl) GetListByQuery(ctx context.Context, productId int, star
 	if stars > 0 {
 		filter["stars"] = stars
 	}
+	filter["status"] = "approved"
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
 
@@ -367,6 +369,30 @@ func (c *CommentDaoImpl) UpdateIsPinnedByID(ctx context.Context, id string, isPi
 	}
 	filter := bson.M{"_id": objectID}
 	update := bson.M{"$set": bson.M{"is_pinned": isPinned}}
+
+	_, err = c.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		log.Logger.Errorf("UpdateOne failed id=%s err=%v", id, err)
+		return err
+	}
+	return nil
+}
+
+func (c *CommentDaoImpl) UpdateReviewByID(ctx context.Context, id string, updates map[string]interface{}) error {
+	if c.collection == nil {
+		log.Logger.Errorf("mongo collection is nil")
+		return nil
+	}
+	if len(updates) == 0 {
+		return nil
+	}
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Logger.Errorf("parse id failed. id=%s err=%v", id, err)
+		return err
+	}
+	filter := bson.M{"_id": objectID}
+	update := bson.M{"$set": updates}
 
 	_, err = c.collection.UpdateOne(ctx, filter, update)
 	if err != nil {

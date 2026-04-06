@@ -212,6 +212,32 @@ func DeleteReview(c *gin.Context) {
 	c.JSON(http.StatusOK, RespSuccess(c, "delete success"))
 }
 
+// UpdateReviewStatus Update review moderation status and fields.
+//
+// @Summary Update Review
+// @Description Update review fields: status (required), is_mismatch/is_harmful/auto_flag (optional). For agent service use.
+// @Tags Review
+// @Accept json
+// @Produce json
+// @Param request body types.UpdateReviewStatusRequest true "UpdateReviewStatusRequest"
+// @Success 200 {object} data.BaseResponse{data=string}
+// @Failure 400 {object} data.BaseResponse{data=string}
+// @Failure 500 {object} data.BaseResponse{data=string}
+// @Router /comment-ms/v1/merchant/reviews/status [post]
+func UpdateReviewStatus(c *gin.Context) {
+	var req types.UpdateReviewStatusRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: err.Error()})
+		return
+	}
+	err := service.GetReviewServiceInstance().UpdateReview(c, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, RespSuccess(c, "update review success"))
+}
+
 // ReplyReview Reply.
 //
 // @Summary Review Reply
