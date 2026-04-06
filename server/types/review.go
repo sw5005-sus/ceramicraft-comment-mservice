@@ -43,3 +43,11 @@ type ListReviewRequest struct {
 	ProductID int `json:"product_id"`
 	Stars     int `json:"stars"` // 0 means any stars
 }
+
+type UpdateReviewStatusRequest struct {
+	ReviewID  string `json:"review_id"`           // required
+	Status    string `json:"status"`              // required: pending / processing / approved / hidden / rejected
+	IsMismatch *bool  `json:"is_mismatch,omitempty"` // optional
+	IsHarmful *bool  `json:"is_harmful,omitempty"`   // optional
+	AutoFlag  *string `json:"auto_flag,omitempty"`    // optional
+}
