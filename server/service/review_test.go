@@ -568,6 +568,95 @@ func TestDeleteReview_NonPinned_Success(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestUpdateReview_StatusOnly_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	reviewID := "review123"
+	req := types.UpdateReviewStatusRequest{
+		ReviewID: reviewID,
+		Status:   "approved",
+	}
+
+	mockDao.EXPECT().UpdateReviewByID(gomock.Any(), reviewID, gomock.MatcherFunc(func(updates map[string]interface{}) bool {
+		// Check that status is set
+		return updates["status"] == "approved" && len(updates) == 1
+	})).Return(nil)
+
+	err := svc.UpdateReview(context.Background(), req)
+	assert.NoError(t, err)
+}
+
+func TestUpdateReview_WithOptionalFields_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	reviewID := "review456"
+	isMismatch := true
+	isHarmful := false
+	autoFlag := "spam"
+
+	req := types.UpdateReviewStatusRequest{
+		ReviewID:   reviewID,
+		Status:     "hidden",
+		IsMismatch: &isMismatch,
+		IsHarmful:  &isHarmful,
+		AutoFlag:   &autoFlag,
+	}
+
+	mockDao.EXPECT().UpdateReviewByID(gomock.Any(), reviewID, gomock.MatcherFunc(func(updates map[string]interface{}) bool {
+		// Check all fields are present
+		return updates["status"] == "hidden" &&
+			updates["is_mismatch"] == true &&
+			updates["is_harmful"] == false &&
+			updates["auto_flag"] == "spam" &&
+			len(updates) == 4
+	})).Return(nil)
+
+	err := svc.UpdateReview(context.Background(), req)
+	assert.NoError(t, err)
+}
+
+func TestUpdateReview_EmptyReviewID_Error(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	req := types.UpdateReviewStatusRequest{
+		ReviewID: "",
+		Status:   "approved",
+	}
+
+	err := svc.UpdateReview(context.Background(), req)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "empty review_id")
+}
+
+func TestUpdateReview_InvalidStatus_Error(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	req := types.UpdateReviewStatusRequest{
+		ReviewID: "review789",
+		Status:   "invalid_status",
+	}
+
+	err := svc.UpdateReview(context.Background(), req)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid status")
+}
+
 func TestDeleteReview_Pinned_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
