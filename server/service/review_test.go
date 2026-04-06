@@ -581,10 +581,13 @@ func TestUpdateReview_StatusOnly_Success(t *testing.T) {
 		Status:   "approved",
 	}
 
-	mockDao.EXPECT().UpdateReviewByID(gomock.Any(), reviewID, gomock.MatcherFunc(func(updates map[string]interface{}) bool {
-		// Check that status is set
-		return updates["status"] == "approved" && len(updates) == 1
-	})).Return(nil)
+	mockDao.EXPECT().UpdateReviewByID(gomock.Any(), reviewID, gomock.Any()).DoAndReturn(
+		func(ctx context.Context, id string, updates map[string]interface{}) error {
+			assert.Equal(t, reviewID, id)
+			assert.Equal(t, "approved", updates["status"])
+			assert.Equal(t, 1, len(updates))
+			return nil
+		})
 
 	err := svc.UpdateReview(context.Background(), req)
 	assert.NoError(t, err)
@@ -610,14 +613,16 @@ func TestUpdateReview_WithOptionalFields_Success(t *testing.T) {
 		AutoFlag:   &autoFlag,
 	}
 
-	mockDao.EXPECT().UpdateReviewByID(gomock.Any(), reviewID, gomock.MatcherFunc(func(updates map[string]interface{}) bool {
-		// Check all fields are present
-		return updates["status"] == "hidden" &&
-			updates["is_mismatch"] == true &&
-			updates["is_harmful"] == false &&
-			updates["auto_flag"] == "spam" &&
-			len(updates) == 4
-	})).Return(nil)
+	mockDao.EXPECT().UpdateReviewByID(gomock.Any(), reviewID, gomock.Any()).DoAndReturn(
+		func(ctx context.Context, id string, updates map[string]interface{}) error {
+			assert.Equal(t, reviewID, id)
+			assert.Equal(t, "hidden", updates["status"])
+			assert.Equal(t, true, updates["is_mismatch"])
+			assert.Equal(t, false, updates["is_harmful"])
+			assert.Equal(t, "spam", updates["auto_flag"])
+			assert.Equal(t, 4, len(updates))
+			return nil
+		})
 
 	err := svc.UpdateReview(context.Background(), req)
 	assert.NoError(t, err)
