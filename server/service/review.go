@@ -22,6 +22,7 @@ type ReviewService interface {
 	DeleteReview(ctx context.Context, reviewID string) (err error)
 	GetListByQuery(ctx context.Context, req types.ListReviewRequest, userID int) (resp []types.ReviewInfo, err error)
 	UpdateReview(ctx context.Context, req types.UpdateReviewStatusRequest) (err error)
+	GetListByStatus(ctx context.Context, status string) (list []types.ReviewInfo, err error)
 }
 
 const (
@@ -333,4 +334,27 @@ func (r *ReviewServiceImpl) UpdateReview(ctx context.Context, req types.UpdateRe
 	}
 	
 	return r.reviewDao.UpdateReviewByID(ctx, req.ReviewID, updates)
+}
+
+func (r *ReviewServiceImpl) GetListByStatus(ctx context.Context, status string) (list []types.ReviewInfo, err error) {
+	// Validate status parameter
+	validStatuses := map[string]bool{
+		"pending":    true,
+		"processing": true,
+		"approved":   true,
+		"hidden":     true,
+		"rejected":   true,
+	}
+	
+	if !validStatuses[status] {
+		return nil, fmt.Errorf("invalid status: %s", status)
+	}
+	
+	listRaw, err := r.reviewDao.GetListByStatus(ctx, status)
+	if err != nil {
+		return nil, err
+	}
+	
+	// Use system user ID (0) since agent doesn't have user context
+	return r.buildReviewInfoList(ctx, listRaw, 0)
 }

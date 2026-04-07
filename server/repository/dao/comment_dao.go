@@ -27,6 +27,7 @@ type CommentDao interface {
 	GetListByUserID(ctx context.Context, userID int) (list []*model.Comment, err error)
 	GetListByProductID(ctx context.Context, productId int) (list []*model.Comment, err error)
 	GetListByQuery(ctx context.Context, productId int, stars int) (list []*model.Comment, err error)
+	GetListByStatus(ctx context.Context, status string) (list []*model.Comment, err error)
 	HMGet(ctx context.Context, key string, members []string) (likesCntMap map[string]int, err error)
 	SMembers(ctx context.Context, key string) (likedReviewIds []string, err error)
 	HGet(ctx context.Context, key string, member string) (value string, err error)
@@ -400,4 +401,42 @@ func (c *CommentDaoImpl) UpdateReviewByID(ctx context.Context, id string, update
 		return err
 	}
 	return nil
+}
+
+func (c *CommentDaoImpl) GetListByStatus(ctx context.Context, status string) (list []*model.Comment, err error) {
+	if c.collection == nil {
+		log.Logger.Errorf("mongo collection is nil")
+		return nil, nil
+	}
+	
+	filter := bson.M{"status": status}
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
+
+	cursor, err := c.collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		log.Logger.Errorf("Find by status failed\tstatus=%s\terr=%v", status, err)
+		return nil, err
+	}
+	defer func() {
+		if err := cursor.Close(ctx); err != nil {
+			log.Logger.Errorf("failed to close cursor: %v", err)
+		}
+	}()
+	
+	var results []*model.Comment
+	for cursor.Next(ctx) {
+		var cm model.Comment
+		if err := cursor.Decode(&cm); err != nil {
+			log.Logger.Errorf("Decode comment failed\terr=%v", err)
+			return nil, err
+		}
+		results = append(results, &cm)
+	}
+	if err := cursor.Err(); err != nil {
+		log.Logger.Errorf("cursor iteration error\terr=%v", err)
+		return nil, err
+	}
+	
+	return results, nil
 }

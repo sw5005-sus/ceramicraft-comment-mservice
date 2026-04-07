@@ -731,6 +731,111 @@ func TestGetListByQuery_DAOError(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestGetListByStatus_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	status := "pending"
+	userID := 0
+	// prepare comments with pending status
+	cm1 := &model.Comment{
+		ID:          "pending1",
+		Content:     "awaiting approval",
+		UserID:      123,
+		ProductID:   10,
+		ParentID:    "",
+		Stars:       3,
+		PicInfo:     []string{},
+		IsAnonymous: false,
+		Status:      status,
+		CreatedAt:   time.Now(),
+	}
+	cm2 := &model.Comment{
+		ID:          "pending2",
+		Content:     "another pending",
+		UserID:      456,
+		ProductID:   20,
+		ParentID:    "",
+		Stars:       4,
+		PicInfo:     []string{"img.jpg"},
+		IsAnonymous: true,
+		Status:      status,
+		CreatedAt:   time.Now().Add(-time.Hour),
+	}
+
+	mockDao.EXPECT().GetListByStatus(gomock.Any(), status).Return([]*model.Comment{cm1, cm2}, nil)
+	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).DoAndReturn(
+		func(ctx context.Context, key string, members []string) (map[string]int, error) {
+			assert.ElementsMatch(t, []string{"pending1", "pending2"}, members)
+			return map[string]int{"pending1": 0, "pending2": 1}, nil
+		})
+	mockDao.EXPECT().SMembers(gomock.Any(), "user:"+strconv.Itoa(userID)+":likes").Return([]string{}, nil)
+
+	list, err := svc.GetListByStatus(context.Background(), status)
+	assert.NoError(t, err)
+	assert.Len(t, list, 2)
+	assert.Equal(t, "pending1", list[0].ID)
+	assert.Equal(t, "pending2", list[1].ID)
+	assert.Equal(t, 0, list[0].Likes)
+	assert.Equal(t, 1, list[1].Likes)
+}
+
+func TestGetListByStatus_InvalidStatus_Error(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	invalidStatus := "invalid_status"
+	_, err := svc.GetListByStatus(context.Background(), invalidStatus)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid status")
+}
+
+func TestGetListByStatus_ProcessingStatus_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	status := "processing"
+	cm := &model.Comment{
+		ID:      "proc1",
+		Status:  status,
+		Content: "being processed",
+		UserID:  111,
+		CreatedAt: time.Now(),
+	}
+
+	mockDao.EXPECT().GetListByStatus(gomock.Any(), status).Return([]*model.Comment{cm}, nil)
+	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.Any()).Return(map[string]int{"proc1": 0}, nil)
+	mockDao.EXPECT().SMembers(gomock.Any(), gomock.Any()).Return([]string{}, nil)
+
+	list, err := svc.GetListByStatus(context.Background(), status)
+	assert.NoError(t, err)
+	assert.Len(t, list, 1)
+	assert.Equal(t, "proc1", list[0].ID)
+}
+
+func TestGetListByStatus_DAOError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	status := "approved"
+	mockDao.EXPECT().GetListByStatus(gomock.Any(), status).Return(nil, assert.AnError)
+
+	_, err := svc.GetListByStatus(context.Background(), status)
+	assert.Error(t, err)
+}
+
 func TestGetListByQuery_StarsZero_AllStars(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
