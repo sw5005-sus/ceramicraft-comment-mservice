@@ -251,3 +251,18 @@ func (mr *MockCommentDaoMockRecorder) UpdateReviewByID(ctx, id, updates interfac
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateReviewByID", reflect.TypeOf((*MockCommentDao)(nil).UpdateReviewByID), ctx, id, updates)
 }
+
+// GetListByStatus mocks base method.
+func (m *MockCommentDao) GetListByStatus(ctx context.Context, status string) ([]*model.Comment, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListByStatus", ctx, status)
+	ret0, _ := ret[0].([]*model.Comment)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListByStatus indicates an expected call of GetListByStatus.
+func (mr *MockCommentDaoMockRecorder) GetListByStatus(ctx, status interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListByStatus", reflect.TypeOf((*MockCommentDao)(nil).GetListByStatus), ctx, status)
+}
