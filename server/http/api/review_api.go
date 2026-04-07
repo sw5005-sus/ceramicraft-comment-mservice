@@ -249,7 +249,7 @@ func UpdateReviewStatus(c *gin.Context) {
 // @Success 200 {object} data.BaseResponse{data=[]types.ReviewInfo}
 // @Failure 400 {object} data.BaseResponse{data=string}
 // @Failure 500 {object} data.BaseResponse{data=string}
-// @Router /comment-ms/v1/reviews/by-status [get]
+// @Router /comment-ms/v1/merchant/reviews/by-status [get]
 func GetListByStatus(c *gin.Context) {
 	status := c.Query("status")
 	if status == "" {
