@@ -423,6 +423,103 @@ paths:
       summary: Review Reply
       tags:
       - Review
+  /comment-ms/v1/merchant/reviews/status:
+    post:
+      consumes:
+      - application/json
+      description: "Update review fields: status (required), is_mismatch/is_harmful/auto_flag (optional). For agent service use."
+      parameters:
+      - description: UpdateReviewStatusRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateReviewStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update Review
+      tags:
+      - Review
+  /comment-ms/v1/merchant/reviews/by-status:
+    get:
+      consumes:
+      - application/json
+      description: Get all reviews with specified status.
+      parameters:
+      - description: Review status
+        enum:
+        - pending
+        - processing
+        - approved
+        - hidden
+        - rejected
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/types.ReviewInfo'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get reviews by status
+      tags:
+      - Review
   /comment-ms/v1/merchant/reviews/list:
     post:
       consumes:
