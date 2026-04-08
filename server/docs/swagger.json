@@ -368,6 +368,91 @@
                 }
             }
         },
+        "/comment-ms/v1/merchant/reviews/list": {
+            "post": {
+                "description": "Filter reviews by product_id and stars (0 means any), ordered by created_at desc",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Review"
+                ],
+                "summary": "List reviews by product and stars",
+                "parameters": [
+                    {
+                        "description": "ListReviewRequest",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ListReviewRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/data.BaseResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/types.ReviewInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/data.BaseResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/data.BaseResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/comment-ms/v1/merchant/reviews/status": {
             "post": {
                 "description": "Update review fields: status (required), is_mismatch/is_harmful/auto_flag (optional). For agent service use.",
@@ -450,7 +535,7 @@
                 }
             }
         },
-        "/comment-ms/v1/merchant/reviews/by-status": {
+        "/comment-ms/v1/merchant/reviews/status/{status}": {
             "get": {
                 "description": "Get all reviews with specified status.",
                 "consumes": [
@@ -475,93 +560,8 @@
                         "type": "string",
                         "description": "Review status",
                         "name": "status",
-                        "in": "query",
+                        "in": "path",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/data.BaseResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/types.ReviewInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/data.BaseResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/data.BaseResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/comment-ms/v1/merchant/reviews/list": {
-            "post": {
-                "description": "Filter reviews by product_id and stars (0 means any), ordered by created_at desc",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Review"
-                ],
-                "summary": "List reviews by product and stars",
-                "parameters": [
-                    {
-                        "description": "ListReviewRequest",
-                        "name": "filter",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.ListReviewRequest"
-                        }
                     }
                 ],
                 "responses": {
@@ -990,6 +990,31 @@
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "types.UpdateReviewStatusRequest": {
+            "type": "object",
+            "properties": {
+                "auto_flag": {
+                    "description": "optional",
+                    "type": "string"
+                },
+                "is_harmful": {
+                    "description": "optional",
+                    "type": "boolean"
+                },
+                "is_mismatch": {
+                    "description": "optional",
+                    "type": "boolean"
+                },
+                "review_id": {
+                    "description": "required",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "required: pending / processing / approved / hidden / rejected",
+                    "type": "string"
                 }
             }
         }
