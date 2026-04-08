@@ -334,6 +334,12 @@ func (r *ReviewServiceImpl) UpdateReview(ctx context.Context, req types.UpdateRe
 		"status": req.Status,
 	}
 	
+	if req.Stars != nil {
+		if *req.Stars < 1 || *req.Stars > 5 {
+			return fmt.Errorf("invalid stars: must be between 1 and 5")
+		}
+		updates["stars"] = *req.Stars
+	}
 	if req.IsMismatch != nil {
 		updates["is_mismatch"] = *req.IsMismatch
 	}
