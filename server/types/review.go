@@ -28,6 +28,10 @@ type ReviewInfo struct {
 	Likes            int       `json:"likes"`
 	CurrentUserLiked bool      `json:"current_user_liked"`
 	IsPinned         bool      `json:"is_pinned"`
+	Status           string    `json:"status,omitempty"`
+	IsMismatch       bool      `json:"is_mismatch,omitempty"`
+	IsHarmful        bool      `json:"is_harmful,omitempty"`
+	AutoFlag         string    `json:"auto_flag,omitempty"`
 }
 
 type PinReviewRequest struct {

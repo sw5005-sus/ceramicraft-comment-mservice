@@ -489,7 +489,7 @@ paths:
       summary: List reviews by product and stars
       tags:
       - Review
-  /comment-ms/v1/merchant/reviews/status:
+  /comment-ms/v1/reviews/status:
     post:
       consumes:
       - application/json
@@ -535,7 +535,7 @@ paths:
       summary: Update Review
       tags:
       - Review
-  /comment-ms/v1/merchant/reviews/status/{status}:
+  /comment-ms/v1/reviews/status/{status}:
     get:
       consumes:
       - application/json

@@ -214,8 +214,8 @@ func DeleteReview(c *gin.Context) {
 
 // UpdateReviewStatus Update review moderation status and fields.
 //
-// @Summary Update Review
-// @Description Update review fields: status (required), is_mismatch/is_harmful/auto_flag (optional). For agent service use.
+// @Summary Update Review (internal, no auth required)
+// @Description Update review fields: status (required), is_mismatch/is_harmful/auto_flag (optional). Internal agent API for moderation workflow.
 // @Tags Review
 // @Accept json
 // @Produce json
@@ -223,7 +223,7 @@ func DeleteReview(c *gin.Context) {
 // @Success 200 {object} data.BaseResponse{data=string}
 // @Failure 400 {object} data.BaseResponse{data=string}
 // @Failure 500 {object} data.BaseResponse{data=string}
-// @Router /comment-ms/v1/merchant/reviews/status [post]
+// @Router /comment-ms/v1/reviews/status [post]
 func UpdateReviewStatus(c *gin.Context) {
 	var req types.UpdateReviewStatusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -240,8 +240,8 @@ func UpdateReviewStatus(c *gin.Context) {
 
 // GetListByStatus Get list by status.
 //
-// @Summary Get reviews by status
-// @Description Get all reviews with specified status.
+// @Summary Get reviews by status (internal, no auth required)
+// @Description Get all reviews with specified status. Internal agent API for moderation workflow.
 // @Tags Review
 // @Accept json
 // @Produce json
@@ -249,7 +249,7 @@ func UpdateReviewStatus(c *gin.Context) {
 // @Success 200 {object} data.BaseResponse{data=[]types.ReviewInfo}
 // @Failure 400 {object} data.BaseResponse{data=string}
 // @Failure 500 {object} data.BaseResponse{data=string}
-// @Router /comment-ms/v1/merchant/reviews/status/{status} [get]
+// @Router /comment-ms/v1/reviews/status/{status} [get]
 func GetListByStatus(c *gin.Context) {
 	status := c.Param("status")
 	if status == "" {
