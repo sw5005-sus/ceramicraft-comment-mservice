@@ -464,7 +464,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/comment-ms/v1/merchant/reviews/status": {
+        "/comment-ms/v1/reviews/status": {
             "post": {
                 "description": "Update review fields: status (required), is_mismatch/is_harmful/auto_flag (optional). For agent service use.",
                 "consumes": [
@@ -546,7 +546,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/comment-ms/v1/merchant/reviews/status/{status}": {
+        "/comment-ms/v1/reviews/status/{status}": {
             "get": {
                 "description": "Get all reviews with specified status.",
                 "consumes": [

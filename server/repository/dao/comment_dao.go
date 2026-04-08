@@ -214,7 +214,6 @@ func (c *CommentDaoImpl) GetListByQuery(ctx context.Context, productId int, star
 	if stars > 0 {
 		filter["stars"] = stars
 	}
-	filter["status"] = "approved"
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
 

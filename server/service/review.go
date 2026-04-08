@@ -95,6 +95,10 @@ func (r *ReviewServiceImpl) getReviewDetail(ctx context.Context, reviewID string
 }
 
 func (r *ReviewServiceImpl) buildReviewInfoList(ctx context.Context, listRaw []*model.Comment, userID int) (list []types.ReviewInfo, err error) {
+	return r.buildReviewInfoListWithAuditFields(ctx, listRaw, userID, false)
+}
+
+func (r *ReviewServiceImpl) buildReviewInfoListWithAuditFields(ctx context.Context, listRaw []*model.Comment, userID int, includeAuditFields bool) (list []types.ReviewInfo, err error) {
 	// get likes from redis
 	// like count
 	members := make([]string, len(listRaw))
@@ -130,6 +134,13 @@ func (r *ReviewServiceImpl) buildReviewInfoList(ctx context.Context, listRaw []*
 			Likes:            likes[review.ID],
 			CurrentUserLiked: curUserLiked,
 			IsPinned:         review.IsPinned,
+		}
+		// Only include audit fields for merchant/agent use
+		if includeAuditFields {
+			ans[idx].Status = review.Status
+			ans[idx].IsMismatch = review.IsMismatch
+			ans[idx].IsHarmful = review.IsHarmful
+			ans[idx].AutoFlag = review.AutoFlag
 		}
 	}
 
@@ -183,7 +194,7 @@ func (r *ReviewServiceImpl) GetListByQuery(ctx context.Context, req types.ListRe
 		return nil, err
 	}
 
-	list, err := r.buildReviewInfoList(ctx, listRaw, userID)
+	list, err := r.buildReviewInfoListWithAuditFields(ctx, listRaw, userID, true)
 	if err != nil {
 		return nil, err
 	}
@@ -356,5 +367,5 @@ func (r *ReviewServiceImpl) GetListByStatus(ctx context.Context, status string) 
 	}
 	
 	// Use system user ID (0) since agent doesn't have user context
-	return r.buildReviewInfoList(ctx, listRaw, 0)
+	return r.buildReviewInfoListWithAuditFields(ctx, listRaw, 0, true)
 }
