@@ -245,24 +245,24 @@ func UpdateReviewStatus(c *gin.Context) {
 // @Tags Review
 // @Accept json
 // @Produce json
-// @Param status query string true "Review status" Enums(pending, processing, approved, hidden, rejected)
+// @Param status path string true "Review status" Enums(pending, processing, approved, hidden, rejected)
 // @Success 200 {object} data.BaseResponse{data=[]types.ReviewInfo}
 // @Failure 400 {object} data.BaseResponse{data=string}
 // @Failure 500 {object} data.BaseResponse{data=string}
-// @Router /comment-ms/v1/merchant/reviews/by-status [get]
+// @Router /comment-ms/v1/merchant/reviews/status/{status} [get]
 func GetListByStatus(c *gin.Context) {
-	status := c.Query("status")
+	status := c.Param("status")
 	if status == "" {
 		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: "status parameter is required"})
 		return
 	}
-	
+
 	list, err := service.GetReviewServiceInstance().GetListByStatus(c, status)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, RespSuccess(c, list))
 }
 
