@@ -109,6 +109,21 @@ func (mr *MockCommentDaoMockRecorder) GetListByUserID(ctx, userID interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListByUserID", reflect.TypeOf((*MockCommentDao)(nil).GetListByUserID), ctx, userID)
 }
 
+// GetListByUserIDExcludeRejected mocks base method.
+func (m *MockCommentDao) GetListByUserIDExcludeRejected(ctx context.Context, userID int) ([]*model.Comment, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListByUserIDExcludeRejected", ctx, userID)
+	ret0, _ := ret[0].([]*model.Comment)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListByUserIDExcludeRejected indicates an expected call of GetListByUserIDExcludeRejected.
+func (mr *MockCommentDaoMockRecorder) GetListByUserIDExcludeRejected(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListByUserIDExcludeRejected", reflect.TypeOf((*MockCommentDao)(nil).GetListByUserIDExcludeRejected), ctx, userID)
+}
+
 // HDel mocks base method.
 func (m *MockCommentDao) HDel(ctx context.Context, key, member string) error {
 	m.ctrl.T.Helper()

@@ -995,3 +995,119 @@ func TestPinReview_HSetFail(t *testing.T) {
 	err := svc.PinReview(context.Background(), reviewID)
 	assert.Error(t, err)
 }
+
+func TestGetReviewsByUserID_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	userID := 500
+	cm1 := &model.Comment{
+		ID:        "u1",
+		Content:   "approved review",
+		UserID:    userID,
+		ProductID: 10,
+		Stars:     5,
+		Status:    "approved",
+		CreatedAt: time.Now(),
+	}
+	cm2 := &model.Comment{
+		ID:        "u2",
+		Content:   "pending review",
+		UserID:    userID,
+		ProductID: 20,
+		Stars:     3,
+		Status:    "pending",
+		CreatedAt: time.Now().Add(-time.Hour),
+	}
+
+	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return([]*model.Comment{cm1, cm2}, nil)
+	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).DoAndReturn(
+		func(ctx context.Context, key string, members []string) (map[string]int, error) {
+			assert.ElementsMatch(t, []string{"u1", "u2"}, members)
+			return map[string]int{"u1": 3, "u2": 0}, nil
+		})
+	// userID=0 because this is a public endpoint with no auth context
+	mockDao.EXPECT().SMembers(gomock.Any(), "user:0:likes").Return([]string{}, nil)
+
+	list, err := svc.GetReviewsByUserID(context.Background(), userID)
+	assert.NoError(t, err)
+	assert.Len(t, list, 2)
+	assert.Equal(t, "u1", list[0].ID)
+	assert.Equal(t, "u2", list[1].ID)
+	assert.Equal(t, 3, list[0].Likes)
+	assert.Equal(t, 0, list[1].Likes)
+	// audit fields should NOT be exposed (Status empty)
+	assert.Empty(t, list[0].Status)
+	assert.Empty(t, list[1].Status)
+}
+
+func TestGetReviewsByUserID_EmptyResult(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	userID := 501
+
+	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return([]*model.Comment{}, nil)
+	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).Return(map[string]int{}, nil)
+	mockDao.EXPECT().SMembers(gomock.Any(), "user:0:likes").Return([]string{}, nil)
+
+	list, err := svc.GetReviewsByUserID(context.Background(), userID)
+	assert.NoError(t, err)
+	assert.Empty(t, list)
+}
+
+func TestGetReviewsByUserID_DAOError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	userID := 502
+
+	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return(nil, assert.AnError)
+
+	_, err := svc.GetReviewsByUserID(context.Background(), userID)
+	assert.Error(t, err)
+}
+
+func TestGetReviewsByUserID_HMGetError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	userID := 503
+	cm := &model.Comment{ID: "u3", UserID: userID, CreatedAt: time.Now()}
+
+	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return([]*model.Comment{cm}, nil)
+	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).Return(nil, assert.AnError)
+
+	_, err := svc.GetReviewsByUserID(context.Background(), userID)
+	assert.Error(t, err)
+}
+
+func TestGetReviewsByUserID_SMembersError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockDao := mocks.NewMockCommentDao(ctrl)
+	svc := &ReviewServiceImpl{reviewDao: mockDao}
+
+	userID := 504
+	cm := &model.Comment{ID: "u4", UserID: userID, CreatedAt: time.Now()}
+
+	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return([]*model.Comment{cm}, nil)
+	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).Return(map[string]int{"u4": 1}, nil)
+	mockDao.EXPECT().SMembers(gomock.Any(), "user:0:likes").Return(nil, assert.AnError)
+
+	_, err := svc.GetReviewsByUserID(context.Background(), userID)
+	assert.Error(t, err)
+}

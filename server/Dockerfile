@@ -1,7 +1,8 @@
 # Use the official Go image with version 1.25
-FROM golang:1.25.8-alpine AS builder 
+FROM golang:1.25.9-alpine AS builder 
 
-RUN apk add --no-cache \
+RUN apk upgrade --no-cache libcrypto3 libssl3 && \
+    apk add --no-cache \
     curl \
     "zlib>=1.3.2-r0"
 
