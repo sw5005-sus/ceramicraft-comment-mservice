@@ -298,3 +298,28 @@ func ReplyReview(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, RespSuccess(c, "reply review success"))
 }
+
+// GetReviewsByUserID gets all non-rejected reviews for a user
+// @Summary Get reviews by user ID
+// @Description Get all reviews (excluding rejected) for a given user, ordered by created_at desc
+// @Tags Review
+// @Produce json
+// @Param user_id path int true "User ID"
+// @Success 200 {object} data.BaseResponse{data=[]types.ReviewInfo}
+// @Failure 400 {object} data.BaseResponse{data=string}
+// @Failure 500 {object} data.BaseResponse{data=string}
+// @Router /comment-ms/v1/users/{user_id}/reviews [get]
+func GetReviewsByUserID(c *gin.Context) {
+	userIDStr := c.Param("user_id")
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil || userID <= 0 {
+		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: "invalid user_id"})
+		return
+	}
+	list, err := service.GetReviewServiceInstance().GetReviewsByUserID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, RespSuccess(c, list))
+}

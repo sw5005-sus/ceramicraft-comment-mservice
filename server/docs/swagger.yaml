@@ -535,6 +535,51 @@ paths:
       summary: Update Review
       tags:
       - Review
+  /comment-ms/v1/users/{user_id}/reviews:
+    get:
+      description: Get all reviews (excluding rejected) for a given user, ordered
+        by created_at desc
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/types.ReviewInfo'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get reviews by user ID
+      tags:
+      - Review
   /comment-ms/v1/reviews/status/{status}:
     get:
       consumes:

@@ -25,6 +25,7 @@ type CommentDao interface {
 	HIncr(ctx context.Context, key string, member string, deta int) (err error)
 	SAdd(ctx context.Context, key string, member string) (err error)
 	GetListByUserID(ctx context.Context, userID int) (list []*model.Comment, err error)
+	GetListByUserIDExcludeRejected(ctx context.Context, userID int) (list []*model.Comment, err error)
 	GetListByProductID(ctx context.Context, productId int) (list []*model.Comment, err error)
 	GetListByQuery(ctx context.Context, productId int, stars int) (list []*model.Comment, err error)
 	GetListByStatus(ctx context.Context, status string) (list []*model.Comment, err error)
@@ -159,6 +160,43 @@ func (c *CommentDaoImpl) GetListByUserID(ctx context.Context, userID int) (list 
 			return nil, err
 		}
 		log.Logger.Infof("cm = %+v\n", cm)
+		results = append(results, &cm)
+	}
+	if err := cursor.Err(); err != nil {
+		log.Logger.Errorf("cursor iteration error\terr=%v", err)
+		return nil, err
+	}
+	return results, nil
+}
+
+func (c *CommentDaoImpl) GetListByUserIDExcludeRejected(ctx context.Context, userID int) (list []*model.Comment, err error) {
+	if c.collection == nil {
+		log.Logger.Errorf("mongo collection is nil")
+		return nil, nil
+	}
+	filter := bson.M{
+		"user_id": userID,
+		"status":  bson.M{"$ne": "rejected"},
+	}
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
+	cursor, err := c.collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		log.Logger.Errorf("Find by user_id exclude rejected failed\tuser_id=%d\terr=%v", userID, err)
+		return nil, err
+	}
+	defer func() {
+		if err := cursor.Close(ctx); err != nil {
+			log.Logger.Errorf("failed to close cursor: %v", err)
+		}
+	}()
+	var results []*model.Comment
+	for cursor.Next(ctx) {
+		var cm model.Comment
+		if err := cursor.Decode(&cm); err != nil {
+			log.Logger.Errorf("Decode comment failed\terr=%v", err)
+			return nil, err
+		}
 		results = append(results, &cm)
 	}
 	if err := cursor.Err(); err != nil {

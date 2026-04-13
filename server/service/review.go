@@ -23,6 +23,7 @@ type ReviewService interface {
 	GetListByQuery(ctx context.Context, req types.ListReviewRequest, userID int) (resp []types.ReviewInfo, err error)
 	UpdateReview(ctx context.Context, req types.UpdateReviewStatusRequest) (err error)
 	GetListByStatus(ctx context.Context, status string) (list []types.ReviewInfo, err error)
+	GetReviewsByUserID(ctx context.Context, userID int) (list []types.ReviewInfo, err error)
 }
 
 const (
@@ -351,6 +352,14 @@ func (r *ReviewServiceImpl) UpdateReview(ctx context.Context, req types.UpdateRe
 	}
 	
 	return r.reviewDao.UpdateReviewByID(ctx, req.ReviewID, updates)
+}
+
+func (r *ReviewServiceImpl) GetReviewsByUserID(ctx context.Context, userID int) (list []types.ReviewInfo, err error) {
+	listRaw, err := r.reviewDao.GetListByUserIDExcludeRejected(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return r.buildReviewInfoList(ctx, listRaw, 0)
 }
 
 func (r *ReviewServiceImpl) GetListByStatus(ctx context.Context, status string) (list []types.ReviewInfo, err error) {
