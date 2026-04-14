@@ -299,9 +299,9 @@ func ReplyReview(c *gin.Context) {
 	c.JSON(http.StatusOK, RespSuccess(c, "reply review success"))
 }
 
-// GetReviewsByUserID gets all non-rejected reviews for a user
+// GetReviewsByUserID gets all approved reviews for a user
 // @Summary Get reviews by user ID
-// @Description Get all reviews (excluding rejected) for a given user, ordered by created_at desc
+// @Description Get all approved reviews for a given user, ordered by created_at desc
 // @Tags Review
 // @Produce json
 // @Param user_id path int true "User ID"

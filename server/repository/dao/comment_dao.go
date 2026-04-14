@@ -142,7 +142,10 @@ func (c *CommentDaoImpl) GetListByUserID(ctx context.Context, userID int) (list 
 		log.Logger.Errorf("mongo collection is nil")
 		return nil, nil
 	}
-	cursor, err := c.collection.Find(ctx, bson.M{"user_id": userID, "status": "approved"})
+	filter := bson.M{"user_id": userID, "status": "approved"}
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
+	cursor, err := c.collection.Find(ctx, filter, findOptions)
 	if err != nil {
 		log.Logger.Errorf("Find by user_id failed\tuser_id=%d\terr=%v", userID, err)
 		return nil, err

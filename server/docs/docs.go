@@ -548,7 +548,7 @@ const docTemplate = `{
         },
         "/comment-ms/v1/users/{user_id}/reviews": {
             "get": {
-                "description": "Get all reviews (excluding rejected) for a given user, ordered by created_at desc",
+                "description": "Get all approved reviews for a given user, ordered by created_at desc",
                 "produces": [
                     "application/json"
                 ],
