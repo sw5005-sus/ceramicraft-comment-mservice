@@ -1023,7 +1023,7 @@ func TestGetReviewsByUserID_Success(t *testing.T) {
 		CreatedAt: time.Now().Add(-time.Hour),
 	}
 
-	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return([]*model.Comment{cm1, cm2}, nil)
+	mockDao.EXPECT().GetListByUserID(gomock.Any(), userID).Return([]*model.Comment{cm1, cm2}, nil)
 	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).DoAndReturn(
 		func(ctx context.Context, key string, members []string) (map[string]int, error) {
 			assert.ElementsMatch(t, []string{"u1", "u2"}, members)
@@ -1053,7 +1053,7 @@ func TestGetReviewsByUserID_EmptyResult(t *testing.T) {
 
 	userID := 501
 
-	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return([]*model.Comment{}, nil)
+	mockDao.EXPECT().GetListByUserID(gomock.Any(), userID).Return([]*model.Comment{}, nil)
 	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).Return(map[string]int{}, nil)
 	mockDao.EXPECT().SMembers(gomock.Any(), "user:0:likes").Return([]string{}, nil)
 
@@ -1071,7 +1071,7 @@ func TestGetReviewsByUserID_DAOError(t *testing.T) {
 
 	userID := 502
 
-	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return(nil, assert.AnError)
+	mockDao.EXPECT().GetListByUserID(gomock.Any(), userID).Return(nil, assert.AnError)
 
 	_, err := svc.GetReviewsByUserID(context.Background(), userID)
 	assert.Error(t, err)
@@ -1087,7 +1087,7 @@ func TestGetReviewsByUserID_HMGetError(t *testing.T) {
 	userID := 503
 	cm := &model.Comment{ID: "u3", UserID: userID, CreatedAt: time.Now()}
 
-	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return([]*model.Comment{cm}, nil)
+	mockDao.EXPECT().GetListByUserID(gomock.Any(), userID).Return([]*model.Comment{cm}, nil)
 	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).Return(nil, assert.AnError)
 
 	_, err := svc.GetReviewsByUserID(context.Background(), userID)
@@ -1104,7 +1104,7 @@ func TestGetReviewsByUserID_SMembersError(t *testing.T) {
 	userID := 504
 	cm := &model.Comment{ID: "u4", UserID: userID, CreatedAt: time.Now()}
 
-	mockDao.EXPECT().GetListByUserIDExcludeRejected(gomock.Any(), userID).Return([]*model.Comment{cm}, nil)
+	mockDao.EXPECT().GetListByUserID(gomock.Any(), userID).Return([]*model.Comment{cm}, nil)
 	mockDao.EXPECT().HMGet(gomock.Any(), reviewLikesCntKey, gomock.AssignableToTypeOf([]string{})).Return(map[string]int{"u4": 1}, nil)
 	mockDao.EXPECT().SMembers(gomock.Any(), "user:0:likes").Return(nil, assert.AnError)
 

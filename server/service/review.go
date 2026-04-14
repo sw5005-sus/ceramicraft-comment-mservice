@@ -355,7 +355,7 @@ func (r *ReviewServiceImpl) UpdateReview(ctx context.Context, req types.UpdateRe
 }
 
 func (r *ReviewServiceImpl) GetReviewsByUserID(ctx context.Context, userID int) (list []types.ReviewInfo, err error) {
-	listRaw, err := r.reviewDao.GetListByUserIDExcludeRejected(ctx, userID)
+	listRaw, err := r.reviewDao.GetListByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
